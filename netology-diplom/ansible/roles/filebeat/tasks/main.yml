@@ -1,0 +1,10 @@
+---
+- name: replace config file
+  template:
+    src: filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+  notify:
+    - enable filebeat
+        
+- name: setup filebeat
+  shell: 'filebeat setup'

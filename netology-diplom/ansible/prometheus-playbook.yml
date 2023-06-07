@@ -1,0 +1,6 @@
+- hosts: prometheus
+  remote_user: stanislav
+  become: yes
+  become_method: sudo
+  roles:
+    - prometheus
