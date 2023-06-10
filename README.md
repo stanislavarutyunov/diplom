@@ -65,11 +65,12 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 
 
 
-Для начала работы я составил полный план того,что мне необходимо будет сделать:
+# Для начала работы я составил полный план того,что мне необходимо будет сделать:
 
 ![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/c2693753-a924-4a78-9402-c26a40a1a22c)
 
-1) Для развертки инфраструкты используем Terraform:
+1) ## Для развертки инфраструкты используем Terraform:
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/main.tf
 
 ![Снимок экрана от 2023-06-07 21-31-40](https://github.com/stanislavarutyunov/diplom/assets/119142863/8227e0b3-5600-4363-a155-83905c798582)
 
@@ -79,7 +80,7 @@ Cоздайте ВМ, разверните на ней Elasticsearch. Устан
 
 ![Снимок экрана от 2023-06-07 21-35-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/db9d0dad-cd73-43d2-8366-3e805339ea5f)
 
-Инициализируем TERRAFORM:
+## Инициализируем TERRAFORM:
 
 ![terraforminit](https://github.com/stanislavarutyunov/diplom/assets/119142863/4e3df729-327b-4eb5-a290-df09755795c3)
 
@@ -87,17 +88,42 @@ Terraform validate:
 
 ![terrvalapply](https://github.com/stanislavarutyunov/diplom/assets/119142863/01488034-5161-4e9b-9cca-d31585079bc8)
 
-Terraform apply:
+
+## Terraform apply:
 
 ![terrapply](https://github.com/stanislavarutyunov/diplom/assets/119142863/663de513-8ff6-4978-ac18-769a2a66cccf)
 
 Прописываем yes и инфраструктура создана. Все конфигурационные файлы,которые использовались для создания хостов,vpc и остальных сервисов в папке terraform.
 
-2) С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/terraform.tfstate.backup
+
+2) #Попадаем на наш бастион и пробрасываем ему ключи доступа для всех хостов
+
+![Снимок экрана от 2023-06-10 08-35-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/b519c6b6-b80c-4583-b74b-56a9e1221107)
+
+
+4) #С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/inventory/hosts.ini
+
+
+
 
 ![Снимок экрана от 2023-06-10 08-00-57](https://github.com/stanislavarutyunov/diplom/assets/119142863/c436114f-72ec-45c2-99cb-0e0bd6c1feff)
 
-Первый плейбук:
+![Снимок экрана от 2023-06-10 08-39-10](https://github.com/stanislavarutyunov/diplom/assets/119142863/653f0130-5d5b-4026-ab63-999dea5b40b8)
+
+
+##Первый плейбук:
+
+roles:
+    - nginx
+    - node_exporter
+    - nginx_logexporter
+    - filebeat
+
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/servers-playbook.yml
 
 ![Снимок экрана от 2023-06-10 08-02-15](https://github.com/stanislavarutyunov/diplom/assets/119142863/065a39f4-afd4-4443-b632-14617da8f161)
 
@@ -123,6 +149,13 @@ Terraform apply:
 
 Сайт я сделал интерактивным,при нажатии на ссылку kibana или grafana можно попасть на указанный нами ресурс:
 
+#второй и третий  плейбуки:
+
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml
+
 http://158.160.18.98:3000/login пароль admin
 
 ![grafana1](https://github.com/stanislavarutyunov/diplom/assets/119142863/d2612b82-1e66-4f8b-bb3c-c2c63afa8c64)
@@ -136,11 +169,15 @@ http://158.160.18.98:3000/login пароль admin
 ![grafana3](https://github.com/stanislavarutyunov/diplom/assets/119142863/c0212af0-2e3c-4b5d-8625-69bc81e5d101)
 
 
-![prometheus-nginxlog-exporter](https://github.com/stanislavarutyunov/diplom/assets/119142863/bf12fa1a-1da9-4368-88f2-92815e037240)
-
 ![Снимок экрана от 2023-06-10 07-59-27](https://github.com/stanislavarutyunov/diplom/assets/119142863/9c7fbec6-155c-4e7a-83b3-2c778841457f)
 
+# четвертый и пятый плейбуки:
+
 http://158.160.0.12:5601/app/home#/ -Kibana
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/elasticsearch-playbook.yml
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/kibana-playbook.yml
 
 ![Снимок экрана от 2023-06-10 08-14-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/3a28b7c8-4b16-40a2-915b-de478645a297)
 
