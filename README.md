@@ -95,6 +95,23 @@ Terraform apply:
 
 2) С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
 
+![Снимок экрана от 2023-06-10 08-00-57](https://github.com/stanislavarutyunov/diplom/assets/119142863/c436114f-72ec-45c2-99cb-0e0bd6c1feff)
+
+Первый плейбук:
+
+![Снимок экрана от 2023-06-10 08-02-15](https://github.com/stanislavarutyunov/diplom/assets/119142863/065a39f4-afd4-4443-b632-14617da8f161)
+
+![nginxplay](https://github.com/stanislavarutyunov/diplom/assets/119142863/17e254d5-df08-44f6-8923-4b7b0f2d70d0)
+
+![nginxlog_exporter](https://github.com/stanislavarutyunov/diplom/assets/119142863/b74cd4f0-57aa-445d-ae5c-fe01d922b4db)
+
+![nginxserv](https://github.com/stanislavarutyunov/diplom/assets/119142863/f5c315c3-e1c3-47d8-8bdc-db66f0fbaba6)
+
+![nodeexpserv](https://github.com/stanislavarutyunov/diplom/assets/119142863/89a888c8-5e7c-410b-90d7-747005674fc9)
+
+![filebeat](https://github.com/stanislavarutyunov/diplom/assets/119142863/25b696ad-4acb-4c3a-89c9-10578ca8989f)
+
+
 Адрес сайта http://130.193.34.194/
 
 ![Снимок экрана от 2023-06-07 21-51-41](https://github.com/stanislavarutyunov/diplom/assets/119142863/cb156f59-d20b-40ae-9c84-b74f3998634b)
@@ -103,4 +120,19 @@ Terraform apply:
 
 ![Снимок экрана от 2023-06-07 21-14-51](https://github.com/stanislavarutyunov/diplom/assets/119142863/3415162e-723a-4ca6-a8c0-572513422292)
 
- 
+
+Сайт я сделал интерактивным,при нажатии на ссылку kibana или grafana можно попасть на указанный нами ресурс:
+
+http://158.160.69.207:3000/ пароль admin
+
+![grafana1](https://github.com/stanislavarutyunov/diplom/assets/119142863/d2612b82-1e66-4f8b-bb3c-c2c63afa8c64)
+
+![grafana2](https://github.com/stanislavarutyunov/diplom/assets/119142863/4fc454eb-c2d9-4be8-9337-a544ca2b874f)
+
+![grafana3](https://github.com/stanislavarutyunov/diplom/assets/119142863/c0212af0-2e3c-4b5d-8625-69bc81e5d101)
+
+
+![prometheus-nginxlog-exporter](https://github.com/stanislavarutyunov/diplom/assets/119142863/bf12fa1a-1da9-4368-88f2-92815e037240)
+
+![Снимок экрана от 2023-06-10 07-59-27](https://github.com/stanislavarutyunov/diplom/assets/119142863/9c7fbec6-155c-4e7a-83b3-2c778841457f)
+
