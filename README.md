@@ -158,7 +158,8 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/g
 
 ## http://158.160.18.98:3000/login пароль admin
 
-![grafana1](https://github.com/stanislavarutyunov/diplom/assets/119142863/d2612b82-1e66-4f8b-bb3c-c2c63afa8c64)
+![Снимок экрана от 2023-06-10 09-00-31](https://github.com/stanislavarutyunov/diplom/assets/119142863/0fa40846-f070-4896-8e90-9969cf30ded5)
+
 
 ![grafana2](https://github.com/stanislavarutyunov/diplom/assets/119142863/4fc454eb-c2d9-4be8-9337-a544ca2b874f)
 
