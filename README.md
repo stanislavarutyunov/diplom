@@ -35,17 +35,15 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
 
 ![Снимок экрана от 2023-06-10 08-35-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/b519c6b6-b80c-4583-b74b-56a9e1221107)
 
+![Снимок экрана от 2023-06-10 08-39-10](https://github.com/stanislavarutyunov/diplom/assets/119142863/653f0130-5d5b-4026-ab63-999dea5b40b8)
+
 
 3) # С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/inventory/hosts.ini
 
 
-
-
 ![Снимок экрана от 2023-06-10 08-00-57](https://github.com/stanislavarutyunov/diplom/assets/119142863/c436114f-72ec-45c2-99cb-0e0bd6c1feff)
-
-![Снимок экрана от 2023-06-10 08-39-10](https://github.com/stanislavarutyunov/diplom/assets/119142863/653f0130-5d5b-4026-ab63-999dea5b40b8)
 
 
 # Первый плейбук:
@@ -63,16 +61,33 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 ![nginxplay](https://github.com/stanislavarutyunov/diplom/assets/119142863/17e254d5-df08-44f6-8923-4b7b0f2d70d0)
 
+# NGINX:
+
+![Снимок экрана от 2023-06-10 09-21-00](https://github.com/stanislavarutyunov/diplom/assets/119142863/25561929-883e-4458-b93e-b5bf5073e1a4)
+
+# NGINXLOG_EXPORTER:
+
 ![nginxlog_exporter](https://github.com/stanislavarutyunov/diplom/assets/119142863/b74cd4f0-57aa-445d-ae5c-fe01d922b4db)
 
-![nginxserv](https://github.com/stanislavarutyunov/diplom/assets/119142863/f5c315c3-e1c3-47d8-8bdc-db66f0fbaba6)
+# NODE_EXPORTER:
 
 ![nodeexpserv](https://github.com/stanislavarutyunov/diplom/assets/119142863/89a888c8-5e7c-410b-90d7-747005674fc9)
 
+# FILEBEAT:
+
 ![filebeat](https://github.com/stanislavarutyunov/diplom/assets/119142863/25b696ad-4acb-4c3a-89c9-10578ca8989f)
+
+![Снимок экрана от 2023-06-10 09-19-27](https://github.com/stanislavarutyunov/diplom/assets/119142863/5f272295-08ec-4a2d-861b-e5ad42b616e2)
 
 
 ## Адрес сайта http://130.193.34.194/
+ 
+ ### Настройки сайта(NGINX):
+
+
+![Снимок экрана от 2023-06-10 09-29-53](https://github.com/stanislavarutyunov/diplom/assets/119142863/4db632b5-89bc-4203-8055-39a14ca23ea0)
+
+![Снимок экрана от 2023-06-10 09-32-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/5d80a03a-4354-45c4-a9a0-af31616eb1cc)
 
 ![Снимок экрана от 2023-06-07 21-51-41](https://github.com/stanislavarutyunov/diplom/assets/119142863/cb156f59-d20b-40ae-9c84-b74f3998634b)
 
@@ -80,8 +95,10 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 ![Снимок экрана от 2023-06-07 21-14-51](https://github.com/stanislavarutyunov/diplom/assets/119142863/3415162e-723a-4ca6-a8c0-572513422292)
 
-
 Сайт я сделал интерактивным,при нажатии на ссылку kibana или grafana можно попасть на указанный нами ресурс:
+
+![Снимок экрана от 2023-06-10 09-33-23](https://github.com/stanislavarutyunov/diplom/assets/119142863/8b754b08-5044-4f45-938a-a46c00ddb656)
+
 
 # второй и третий  плейбуки:
 
