@@ -79,6 +79,9 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 ![Снимок экрана от 2023-06-10 09-19-27](https://github.com/stanislavarutyunov/diplom/assets/119142863/5f272295-08ec-4a2d-861b-e5ad42b616e2)
 
+![Снимок экрана от 2023-06-10 09-36-00](https://github.com/stanislavarutyunov/diplom/assets/119142863/282bb975-7a02-4ceb-b328-a930a600a1f8)
+
+
 
 ## Адрес сайта http://130.193.34.194/
  
