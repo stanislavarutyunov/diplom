@@ -47,7 +47,6 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
 
 ![Снимок экрана от 2023-06-10 09-41-42](https://github.com/stanislavarutyunov/diplom/assets/119142863/33975671-94b3-486e-bf8c-e32cc7f2d184)
 
-![Снимок экрана от 2023-06-07 21-32-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/3646e967-9e61-436e-bad0-2a5c5eb448a7)
 
 ![Снимок экрана от 2023-06-07 21-34-25](https://github.com/stanislavarutyunov/diplom/assets/119142863/e0019adb-b50f-41af-b684-a17f268c3924)
 
@@ -132,17 +131,20 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 # второй и третий  плейбуки:
 
+```
 - hosts: prometheus
   remote_user: stanislav
   become: yes
   become_method: sudo
   roles:
     - prometheus
+```
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
 
 
 
+```
 - hosts: grafana
   remote_user: stanislav
   become: yes
@@ -152,7 +154,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/p
     grafana_ip: "{{ groups['grafana'] | map('extract', hostvars, ['inventory_hostname']) | join ('') }}"
   roles:
     - grafana
-
+```
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml
 
