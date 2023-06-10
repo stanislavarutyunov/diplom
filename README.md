@@ -167,8 +167,10 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/g
 
 http://158.160.18.98:3000/d/4aBQsjSmz34/nginx-servers-metrics111?orgId=1&refresh=10s
 
+![Снимок экрана от 2023-06-10 13-26-07](https://github.com/stanislavarutyunov/diplom/assets/119142863/f6d1f327-5237-4d71-85c9-c6a915d6d808)
 
-![Снимок экрана от 2023-06-10 13-13-32](https://github.com/stanislavarutyunov/diplom/assets/119142863/e74a51f5-f041-4a89-a98a-cb69bed809d2)
+
+![Снимок экрана от 2023-06-10 13-21-13](https://github.com/stanislavarutyunov/diplom/assets/119142863/116b66c5-e2b1-48ef-8c95-a31b1ea0cb1f)
 
 
 # четвертый и пятый плейбуки:
