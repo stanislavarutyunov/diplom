@@ -158,16 +158,15 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/g
 
 ## http://158.160.18.98:3000/login пароль admin
 
-![Снимок экрана от 2023-06-10 09-00-31](https://github.com/stanislavarutyunov/diplom/assets/119142863/0fa40846-f070-4896-8e90-9969cf30ded5)
+## http://158.160.69.207:3000/d/4aBQsjSmz34/nginx-servers-metrics111?orgId=1&refresh=1d
 
+![Снимок экрана от 2023-06-10 09-02-45](https://github.com/stanislavarutyunov/diplom/assets/119142863/f698282e-42fe-43d3-8392-88e487b69cb0)
 
-![grafana2](https://github.com/stanislavarutyunov/diplom/assets/119142863/4fc454eb-c2d9-4be8-9337-a544ca2b874f)
-
-
-![Снимок экрана от 2023-06-10 08-14-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/f611418b-b53d-4ffe-ac8a-4e0e6f19cceb)
-
+![grafana1](https://github.com/stanislavarutyunov/diplom/assets/119142863/ed66918d-1d03-4d93-95a6-ab6e5a52dead)
 
 ![grafana3](https://github.com/stanislavarutyunov/diplom/assets/119142863/c0212af0-2e3c-4b5d-8625-69bc81e5d101)
+
+![grafana3](https://github.com/stanislavarutyunov/diplom/assets/119142863/4a867457-1966-40c9-b9cd-3787abf2ee6e)
 
 
 ![Снимок экрана от 2023-06-10 07-59-27](https://github.com/stanislavarutyunov/diplom/assets/119142863/9c7fbec6-155c-4e7a-83b3-2c778841457f)
