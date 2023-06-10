@@ -4,7 +4,26 @@
 ![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/c2693753-a924-4a78-9402-c26a40a1a22c)
 
 1) ## Для развертки инфраструкты используем Terraform:
+
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/main.tf
+
+Группы безопасности:
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/securitygroups.tf
+
+Снапшоты:
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/snapshot.tf
+
+Переменные:
+
+https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/variables.tf
+
+
+# Meta:
+
+![Снимок экрана от 2023-06-10 09-42-26](https://github.com/stanislavarutyunov/diplom/assets/119142863/16f81977-023e-49fb-8dbd-da2889980e63)
+
 
 ## Инициализируем TERRAFORM:
 
@@ -19,12 +38,14 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
 
 ![terrapply](https://github.com/stanislavarutyunov/diplom/assets/119142863/663de513-8ff6-4978-ac18-769a2a66cccf)
 
-Прописываем yes и инфраструктура создана. Все конфигурационные файлы,которые использовались для создания хостов,vpc и остальных сервисов в папке terraform.
+### Прописываем yes и инфраструктура создана. Все конфигурационные файлы,которые использовались для создания хостов,vpc и остальных сервисов в папке terraform.
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/terraform.tfstate.backup
 
 
-![Снимок экрана от 2023-06-07 21-31-40](https://github.com/stanislavarutyunov/diplom/assets/119142863/8227e0b3-5600-4363-a155-83905c798582)
+![Снимок экрана от 2023-06-10 09-41-07](https://github.com/stanislavarutyunov/diplom/assets/119142863/1f6f9049-ef2b-461f-bd80-76af53d65c66)
+
+![Снимок экрана от 2023-06-10 09-41-42](https://github.com/stanislavarutyunov/diplom/assets/119142863/33975671-94b3-486e-bf8c-e32cc7f2d184)
 
 ![Снимок экрана от 2023-06-07 21-32-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/3646e967-9e61-436e-bad0-2a5c5eb448a7)
 
@@ -111,8 +132,27 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 # второй и третий  плейбуки:
 
+- hosts: prometheus
+  remote_user: stanislav
+  become: yes
+  become_method: sudo
+  roles:
+    - prometheus
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
+
+
+
+- hosts: grafana
+  remote_user: stanislav
+  become: yes
+  become_method: sudo
+  vars:
+    prometheus_ip: "{{ groups['prometheus'] | map('extract', hostvars, ['inventory_hostname']) | join ('') }}"
+    grafana_ip: "{{ groups['grafana'] | map('extract', hostvars, ['inventory_hostname']) | join ('') }}"
+  roles:
+    - grafana
+
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml
 
