@@ -97,12 +97,12 @@ Terraform validate:
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/terraform.tfstate.backup
 
-2) #Попадаем на наш бастион и пробрасываем ему ключи доступа для всех хостов
+2) # Попадаем на наш бастион и пробрасываем ему ключи доступа для всех хостов
 
 ![Снимок экрана от 2023-06-10 08-35-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/b519c6b6-b80c-4583-b74b-56a9e1221107)
 
 
-4) #С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
+3) # С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/inventory/hosts.ini
 
@@ -114,7 +114,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/i
 ![Снимок экрана от 2023-06-10 08-39-10](https://github.com/stanislavarutyunov/diplom/assets/119142863/653f0130-5d5b-4026-ab63-999dea5b40b8)
 
 
-##Первый плейбук:
+# Первый плейбук:
 
 roles:
     - nginx
@@ -138,7 +138,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 ![filebeat](https://github.com/stanislavarutyunov/diplom/assets/119142863/25b696ad-4acb-4c3a-89c9-10578ca8989f)
 
 
-Адрес сайта http://130.193.34.194/
+## Адрес сайта http://130.193.34.194/
 
 ![Снимок экрана от 2023-06-07 21-51-41](https://github.com/stanislavarutyunov/diplom/assets/119142863/cb156f59-d20b-40ae-9c84-b74f3998634b)
 
@@ -149,14 +149,14 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 Сайт я сделал интерактивным,при нажатии на ссылку kibana или grafana можно попасть на указанный нами ресурс:
 
-#второй и третий  плейбуки:
+# второй и третий  плейбуки:
 
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml
 
-http://158.160.18.98:3000/login пароль admin
+## http://158.160.18.98:3000/login пароль admin
 
 ![grafana1](https://github.com/stanislavarutyunov/diplom/assets/119142863/d2612b82-1e66-4f8b-bb3c-c2c63afa8c64)
 
@@ -173,7 +173,7 @@ http://158.160.18.98:3000/login пароль admin
 
 # четвертый и пятый плейбуки:
 
-http://158.160.0.12:5601/app/home#/ -Kibana
+## http://158.160.0.12:5601/app/home#/ -Kibana
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/elasticsearch-playbook.yml
 
