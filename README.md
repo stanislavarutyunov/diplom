@@ -123,11 +123,15 @@ Terraform apply:
 
 Сайт я сделал интерактивным,при нажатии на ссылку kibana или grafana можно попасть на указанный нами ресурс:
 
-http://158.160.69.207:3000/ пароль admin
+http://158.160.18.98:3000/login пароль admin
 
 ![grafana1](https://github.com/stanislavarutyunov/diplom/assets/119142863/d2612b82-1e66-4f8b-bb3c-c2c63afa8c64)
 
 ![grafana2](https://github.com/stanislavarutyunov/diplom/assets/119142863/4fc454eb-c2d9-4be8-9337-a544ca2b874f)
+
+
+![Снимок экрана от 2023-06-10 08-14-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/f611418b-b53d-4ffe-ac8a-4e0e6f19cceb)
+
 
 ![grafana3](https://github.com/stanislavarutyunov/diplom/assets/119142863/c0212af0-2e3c-4b5d-8625-69bc81e5d101)
 
@@ -135,4 +139,11 @@ http://158.160.69.207:3000/ пароль admin
 ![prometheus-nginxlog-exporter](https://github.com/stanislavarutyunov/diplom/assets/119142863/bf12fa1a-1da9-4368-88f2-92815e037240)
 
 ![Снимок экрана от 2023-06-10 07-59-27](https://github.com/stanislavarutyunov/diplom/assets/119142863/9c7fbec6-155c-4e7a-83b3-2c778841457f)
+
+http://158.160.0.12:5601/app/home#/ -Kibana
+
+![Снимок экрана от 2023-06-10 08-14-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/3a28b7c8-4b16-40a2-915b-de478645a297)
+
+![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/5e6a3c50-fef0-49e3-a8b4-cc2c28714d52)
+
 
