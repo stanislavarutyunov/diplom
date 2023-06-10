@@ -173,14 +173,30 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/g
 
 # четвертый и пятый плейбуки:
 
+В связи с санкциями и недостпуностью ELK,принял решение джелать их через Docker:
+
+![Снимок экрана от 2023-06-10 08-54-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/efe427f9-bb52-4c43-9ab9-9d73c474e3e5)
+
+![Снимок экрана от 2023-06-10 08-54-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/eb414866-d37e-42e0-a122-9c129630bac4)
+
+
 ## http://158.160.0.12:5601/app/home#/ -Kibana
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/elasticsearch-playbook.yml
 
+
+
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/kibana-playbook.yml
+
+![Снимок экрана от 2023-06-10 08-51-29](https://github.com/stanislavarutyunov/diplom/assets/119142863/85c3df60-3aad-47c2-8f9e-9b127e885a9e)
+
 
 ![Снимок экрана от 2023-06-10 08-14-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/3a28b7c8-4b16-40a2-915b-de478645a297)
 
 ![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/5e6a3c50-fef0-49e3-a8b4-cc2c28714d52)
 
 
+![Снимок экрана от 2023-06-10 08-57-45](https://github.com/stanislavarutyunov/diplom/assets/119142863/c18253cd-cc4c-48ea-ba46-652c4f8c1c18)
+
+
+![Снимок экрана от 2023-06-10 08-58-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/103fc671-e1b4-4ac9-b9b4-0370ce8fbd81)
