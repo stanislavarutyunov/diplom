@@ -6,19 +6,11 @@
 1) ## Для развертки инфраструкты используем Terraform:
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/main.tf
 
-![Снимок экрана от 2023-06-07 21-31-40](https://github.com/stanislavarutyunov/diplom/assets/119142863/8227e0b3-5600-4363-a155-83905c798582)
-
-![Снимок экрана от 2023-06-07 21-32-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/3646e967-9e61-436e-bad0-2a5c5eb448a7)
-
-![Снимок экрана от 2023-06-07 21-34-25](https://github.com/stanislavarutyunov/diplom/assets/119142863/e0019adb-b50f-41af-b684-a17f268c3924)
-
-![Снимок экрана от 2023-06-07 21-35-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/db9d0dad-cd73-43d2-8366-3e805339ea5f)
-
 ## Инициализируем TERRAFORM:
 
 ![terraforminit](https://github.com/stanislavarutyunov/diplom/assets/119142863/4e3df729-327b-4eb5-a290-df09755795c3)
 
-Terraform validate:
+## Terraform validate:
 
 ![terrvalapply](https://github.com/stanislavarutyunov/diplom/assets/119142863/01488034-5161-4e9b-9cca-d31585079bc8)
 
@@ -30,6 +22,20 @@ Terraform validate:
 Прописываем yes и инфраструктура создана. Все конфигурационные файлы,которые использовались для создания хостов,vpc и остальных сервисов в папке terraform.
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/terraform.tfstate.backup
+
+
+![Снимок экрана от 2023-06-07 21-31-40](https://github.com/stanislavarutyunov/diplom/assets/119142863/8227e0b3-5600-4363-a155-83905c798582)
+
+![Снимок экрана от 2023-06-07 21-32-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/3646e967-9e61-436e-bad0-2a5c5eb448a7)
+
+![Снимок экрана от 2023-06-07 21-34-25](https://github.com/stanislavarutyunov/diplom/assets/119142863/e0019adb-b50f-41af-b684-a17f268c3924)
+
+![Снимок экрана от 2023-06-07 21-35-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/db9d0dad-cd73-43d2-8366-3e805339ea5f)
+
+![Снимок экрана от 2023-06-10 09-37-59](https://github.com/stanislavarutyunov/diplom/assets/119142863/7aa130e8-8c11-4d21-a7dd-6ecd99ca3673)
+
+
+
 
 2) # Попадаем на наш бастион и пробрасываем ему ключи доступа для всех хостов
 
