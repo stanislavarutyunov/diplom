@@ -10,10 +10,510 @@
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/main.tf
 
+```
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+}
+
+variable "authtoken" {
+  type = string
+}
+
+provider "yandex" {
+  token     = var.authtoken
+  cloud_id  = "b1g7stv2itkaoptc01to"
+  folder_id = "b1gkdj4odgo1a0bjk09u"
+}
+
+resource "yandex_vpc_address" "staddr" {
+  name = "balanceraddr"
+
+  external_ipv4_address {
+    zone_id = "ru-central1-b"
+  }
+}
+
+resource "yandex_compute_instance" "webserver" {
+  for_each = var.webserv
+  name     = each.key
+  zone     = each.value.zone
+
+  resources {
+    cores  = 2
+    memory = 6
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8a67rb91j689dqp60h"
+      size     = 14
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.privatesubnet["${each.value.subnet}"].id
+    security_group_ids = ["${yandex_vpc_security_group.webservers-sg.id}"]
+  }
+
+  metadata = {
+    user-data = "${file("/home/stanislav/git/netology-diplom/terraform/meta.txt")}"
+  }
+}
+
+resource "yandex_compute_instance" "vm-3" {
+  name        = "prometheus"
+  description = "prometheus_server"
+  zone        = "ru-central1-a"
+
+  resources {
+    cores  = 2
+    memory = 6
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8a67rb91j689dqp60h"
+      size     = 16
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.privatesubnet["prsubneta"].id
+    security_group_ids = ["${yandex_vpc_security_group.prometheus-sg.id}"]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+resource "yandex_compute_instance" "vm-4" {
+  name        = "grafana"
+  description = "grafana_server"
+  zone        = "ru-central1-b"
+
+  resources {
+    cores  = 2
+    memory = 8
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8a67rb91j689dqp60h"
+      size     = 18
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.publicsubnet.id
+    nat                = true
+    security_group_ids = ["${yandex_vpc_security_group.grafana-sg.id}"]
+  }
+
+  metadata = {
+    user-data = "${file("/home/stanislav/git/netology-diplom/terraform/meta.txt")}"
+  }
+}
+
+resource "yandex_compute_instance" "vm-5" {
+  name        = "elasticsearch"
+  zone        = "ru-central1-b"
+  description = "elasticsearch_server"
+
+  resources {
+    cores  = 2
+    memory = 6
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8a67rb91j689dqp60h"
+      size     = 20
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.privatesubnet["prsubnetb"].id
+    security_group_ids = ["${yandex_vpc_security_group.elasticsearch-sg.id}"]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+resource "yandex_compute_instance" "vm-6" {
+  name        = "kibana"
+  zone        = "ru-central1-b"
+  description = "kibana_server"
+
+  resources {
+    cores  = 2
+    memory = 8
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8a67rb91j689dqp60h"
+      size     = 16
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.publicsubnet.id
+    nat                = true
+    security_group_ids = ["${yandex_vpc_security_group.kibana-sg.id}"]
+  }
+
+  metadata = {
+    user-data = "${file("/home/stanislav/git/netology-diplom/terraform/meta.txt")}"
+  }
+}
+
+resource "yandex_compute_instance" "vm-7" {
+  name        = "bastionhost"
+  zone        = "ru-central1-b"
+  description = "bastion"
+
+  resources {
+    cores  = 2
+    memory = 2
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8a67rb91j689dqp60h"
+      size     = 8
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.publicsubnet.id
+    nat                = true
+    security_group_ids = ["${yandex_vpc_security_group.bastion.id}"]
+  }
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+resource "yandex_vpc_subnet" "privatesubnet" {
+  for_each       = var.subnetinfo
+  name           = each.key
+  zone           = each.value.zone
+  v4_cidr_blocks = each.value.v4_cidr_blocks
+  network_id     = yandex_vpc_network.network-1.id
+  route_table_id = yandex_vpc_route_table.natroute.id
+}
+
+resource "yandex_vpc_network" "network-1" {
+  name = "network1"
+}
+
+resource "yandex_vpc_gateway" "nat_gateway" {
+  name = "nat-gateway"
+  shared_egress_gateway {}
+}
+
+resource "yandex_vpc_route_table" "natroute" {
+  name       = "nat-route-table"
+  network_id = yandex_vpc_network.network-1.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = yandex_vpc_gateway.nat_gateway.id
+  }
+}
+
+resource "yandex_vpc_subnet" "publicsubnet" {
+  name           = "pubsubnet"
+  zone           = "ru-central1-b"
+  network_id     = yandex_vpc_network.network-1.id
+  v4_cidr_blocks = ["192.168.3.0/24"]
+}
+
+resource "yandex_alb_target_group" "web-target" {
+  name = "web-target-group"
+
+  dynamic "target" {
+    for_each = var.webserv
+    content {
+      subnet_id  = yandex_vpc_subnet.privatesubnet["${target.value.subnet}"].id
+      ip_address = yandex_compute_instance.webserver["${target.key}"].network_interface.0.ip_address
+    }
+  }
+}
+
+resource "yandex_alb_backend_group" "web-backend" {
+  name = "web-backend-group"
+
+  http_backend {
+    name             = "http-backend"
+    weight           = 1
+    port             = 80
+    target_group_ids = ["${yandex_alb_target_group.web-target.id}"]
+    load_balancing_config {
+      panic_threshold = 90
+    }
+    healthcheck {
+      timeout             = "10s"
+      interval            = "2s"
+      healthy_threshold   = 10
+      unhealthy_threshold = 15
+      http_healthcheck {
+        path = "/"
+      }
+    }
+  }
+}
+
+resource "yandex_alb_http_router" "web-router" {
+  name = "webrouter"
+  labels = {
+    tf-label    = "tf-web-http-router"
+    empty-label = ""
+  }
+}
+
+resource "yandex_alb_virtual_host" "virtual-host" {
+  name           = "vhrouter"
+  http_router_id = yandex_alb_http_router.web-router.id
+  route {
+    name = "route1"
+    http_route {
+      http_route_action {
+        backend_group_id = yandex_alb_backend_group.web-backend.id
+        timeout          = "10s"
+      }
+    }
+  }
+}
+
+resource "yandex_alb_load_balancer" "web-load-balancer" {
+  name               = "load-balancer"
+  network_id         = yandex_vpc_network.network-1.id
+  security_group_ids = ["${yandex_vpc_security_group.loadbalancer.id}"]
+
+  allocation_policy {
+    location {
+      zone_id   = "ru-central1-a"
+      subnet_id = yandex_vpc_subnet.privatesubnet["prsubneta"].id
+    }
+    location {
+      zone_id   = "ru-central1-b"
+      subnet_id = yandex_vpc_subnet.privatesubnet["prsubnetb"].id
+    }
+  }
+
+  listener {
+    name = "my-listener"
+    endpoint {
+      address {
+        external_ipv4_address {
+          address = yandex_vpc_address.staddr.external_ipv4_address[0].address
+        }
+      }
+      ports = [80]
+    }
+    http {
+      handler {
+        http_router_id = yandex_alb_http_router.web-router.id
+      }
+    }
+  }
+```
+
 Группы безопасности:
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/securitygroups.tf
 
+```
+resource "yandex_vpc_security_group" "webservers-sg" {
+  name        = "webserverssg"
+  description = "Webservers security group"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    description    = "Rule1 for healthchecks"
+    v4_cidr_blocks = ["198.18.235.0/24"]
+    from_port      = 1
+    to_port        = 32767
+  }
+
+  ingress {
+    protocol       = "TCP"
+    description    = "Rule2 for healthchecks"
+    v4_cidr_blocks = ["198.18.248.0/24"]
+    from_port      = 1
+    to_port        = 32767
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for load balancer"
+    security_group_id = yandex_vpc_security_group.loadbalancer.id
+    port              = 80
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for bastion ssh"
+    security_group_id = yandex_vpc_security_group.bastion.id
+    port              = 22
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule1 for metrics"
+    security_group_id = yandex_vpc_security_group.prometheus-sg.id
+    port              = 9100
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule2 for metrics"
+    security_group_id = yandex_vpc_security_group.prometheus-sg.id
+    port              = 4040
+  }
+
+  egress {
+    protocol       = "ANY"
+    description    = "Rule out"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_vpc_security_group" "prometheus-sg" {
+  name        = "prometheussg"
+  description = "Prometheus security group"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for grafana"
+    security_group_id = yandex_vpc_security_group.grafana-sg.id
+    port              = 9090
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for bastion ssh"
+    security_group_id = yandex_vpc_security_group.bastion.id
+    port              = 22
+  }
+
+  egress {
+    protocol       = "ANY"
+    description    = "Rule out"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_vpc_security_group" "elasticsearch-sg" {
+  name        = "elasticsearchsg"
+  description = "Elasticsearch security group"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for kibana"
+    security_group_id = yandex_vpc_security_group.kibana-sg.id
+    port              = 9200
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for webservers"
+    security_group_id = yandex_vpc_security_group.webservers-sg.id
+    port              = 9200
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for bastion ssh"
+    security_group_id = yandex_vpc_security_group.bastion.id
+    port              = 22
+  }
+
+  egress {
+    protocol       = "ANY"
+    description    = "Rule out"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_vpc_security_group" "grafana-sg" {
+  name        = "grafanasg"
+  description = "Grafana security group"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    description    = "Rule for all"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 3000
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for bastion ssh"
+    security_group_id = yandex_vpc_security_group.bastion.id
+    port              = 22
+  }
+
+  egress {
+    protocol       = "ANY"
+    description    = "Rule out"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_vpc_security_group" "kibana-sg" {
+  name        = "kibanasg"
+  description = "Kibana security group"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    description    = "Rule for all"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 5601
+  }
+
+  ingress {
+    protocol          = "TCP"
+    description       = "Rule for bastion ssh"
+    security_group_id = yandex_vpc_security_group.bastion.id
+    port              = 22
+  }
+
+  egress {
+    protocol       = "ANY"
+    description    = "Rule out"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "yandex_vpc_security_group" "loadbalancer" {
+  name        = "loadbalancer1sg"
+  description = "Load balancer security group"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    description    = "Rule for income"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 80
+  }
+  ```
+  Здесь мы создаем Бастион-хост, который будет доступен с нашего пк по ssh. С бастиона уже мы сможем попасть на все наши остальные хосты, так же на всех хостах мы перекрываем исходящий трафик за исключением некоторых портов для сервисов: Kibana(5601)+внешний ip(158.160.0.12)
+Grafana(3000)+ ip(158.160.18.98). 
+  
 Снапшоты:
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/snapshot.tf
@@ -56,7 +556,52 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
 ![Снимок экрана от 2023-06-07 21-35-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/db9d0dad-cd73-43d2-8366-3e805339ea5f)
 
 ![Снимок экрана от 2023-06-10 09-37-59](https://github.com/stanislavarutyunov/diplom/assets/119142863/7aa130e8-8c11-4d21-a7dd-6ecd99ca3673)
+ 
+ Terraform outputs:
+Что было создано нами при помощи терраформа:
+7 Виртуальных машин,Балансировщик,web-backend,web-backend
+```
+ output "external_ip_address_balancer" {
+  value = yandex_alb_load_balancer.web-load-balancer.listener.*.endpoint.0.address.0.external_ipv4_address
+}
+output "internal_ip_address_web_1" {
+  value = yandex_compute_instance.webserver["web1"].network_interface.0.ip_address
+}
 
+output "internal_ip_address_web_2" {
+  value = yandex_compute_instance.webserver["web2"].network_interface.0.ip_address
+}
+
+output "internal_ip_address_vm_3" {
+  value = yandex_compute_instance.vm-3.network_interface.0.ip_address
+}
+
+output "internal_ip_address_vm_4" {
+  value = yandex_compute_instance.vm-4.network_interface.0.ip_address
+}
+output "external_ip_address_vm_4" {
+  value = yandex_compute_instance.vm-4.network_interface.0.nat_ip_address
+}
+
+output "internal_ip_address_vm_5" {
+  value = yandex_compute_instance.vm-5.network_interface.0.ip_address
+}
+
+output "internal_ip_address_vm_6" {
+  value = yandex_compute_instance.vm-6.network_interface.0.ip_address
+}
+output "external_ip_address_vm_6" {
+  value = yandex_compute_instance.vm-6.network_interface.0.nat_ip_address
+}
+
+output "internal_ip_address_vm_7" {
+  value = yandex_compute_instance.vm-7.network_interface.0.ip_address
+}
+output "external_ip_address_vm_7" {
+  value = yandex_compute_instance.vm-7.network_interface.0.nat_ip_address
+}
+
+```
 
 
 
@@ -64,10 +609,23 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
 
 ![Снимок экрана от 2023-06-10 08-35-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/b519c6b6-b80c-4583-b74b-56a9e1221107)
 
+```
+ssh-add
+Identity added: /home/stanislav/.ssh/id_rsa (stanislav@fedora)
+ssh -A stanislav@158.160.11.91
+ssh -A stanislav@192.168.1.32
+ssh -A stanislav@192.168.2.25
+ и так далее
+```
 ![Снимок экрана от 2023-06-10 08-39-10](https://github.com/stanislavarutyunov/diplom/assets/119142863/653f0130-5d5b-4026-ab63-999dea5b40b8)
 
 
 3) # С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
+
+![Снимок экрана от 2023-06-10 14-18-49](https://github.com/stanislavarutyunov/diplom/assets/119142863/ff1b02f4-e5fb-4307-a727-fa7c80b18014)
+
+Список всех наших хостов:
+Для доступа на все хосты используем "прокси" через наш Бастион:
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/inventory/hosts.ini
 
@@ -81,7 +639,13 @@ roles:
     - nginx
     - node_exporter
     - nginx_logexporter
-    - filebeat
+   
+   ![Снимок экрана от 2023-06-10 14-17-24](https://github.com/stanislavarutyunov/diplom/assets/119142863/c7d9ebfa-1cb2-4271-a131-f9581d0685ba)
+   
+   -filebeat
+   
+   ![Снимок экрана от 2023-06-10 14-18-03](https://github.com/stanislavarutyunov/diplom/assets/119142863/d5bdcd5d-a2c0-450a-b91a-95c2194b5e48)
+
 
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/servers-playbook.yml
@@ -143,7 +707,64 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
     - prometheus
 ```
 
+![Снимок экрана от 2023-06-10 14-23-25](https://github.com/stanislavarutyunov/diplom/assets/119142863/92d0b631-d5cd-44e8-8961-493cc1555859)
+
+Конфиг для Прометеуса:
+```
+ Sample config for Prometheus.
+
+global:
+  scrape_interval:     30s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 40s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: 'example'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['localhost:9093']
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "node-exp-rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'nginx'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 30s
+    scrape_timeout: 30s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets:
+    {% for server in groups['webservers'] %} 
+        - {{ server }}:4040 
+    {% endfor %}
+
+  - job_name: node
+    # If prometheus-node-exporter is installed, grab stats about the local
+    # machine by default.
+    static_configs:
+      - targets:     
+    {% for server in groups['webservers'] %} 
+        - {{ server }}:9100
+    {% endfor %}
+```
+
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
+
 
 
 
@@ -158,6 +779,10 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/p
   roles:
     - grafana
 ```
+
+
+![Снимок экрана от 2023-06-10 14-24-12](https://github.com/stanislavarutyunov/diplom/assets/119142863/d89c8a54-a229-4a10-8580-e2ee21ee76dd)
+
 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml
 
