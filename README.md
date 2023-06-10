@@ -110,6 +110,9 @@ Elasticsearch:
 
 ![Снимок экрана от 2023-06-10 08-54-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/efe427f9-bb52-4c43-9ab9-9d73c474e3e5)
 
+![Снимок экрана от 2023-06-10 09-17-23](https://github.com/stanislavarutyunov/diplom/assets/119142863/b7fba072-49cb-4d5c-ba27-20494b628b07)
+
+
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/elasticsearch-playbook.yml
 
 Kibana(перед запуском уже установил на нем докер) :
