@@ -1,4 +1,7 @@
 
+#Задание можно посмотреть по ссылке:
+https://github.com/netology-code/sys-diplom
+
 # Для начала работы я составил полный план того,что мне необходимо будет сделать:
 
 ![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/c2693753-a924-4a78-9402-c26a40a1a22c)
