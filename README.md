@@ -531,7 +531,7 @@ resource "yandex_vpc_security_group" "loadbalancer" {
 [VARIABLES.TF](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/variables.tf)
 
 
-# Meta:
+# [Meta](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/meta.txt):
 
 ![Снимок экрана от 2023-06-10 09-42-26](https://github.com/stanislavarutyunov/diplom/assets/119142863/16f81977-023e-49fb-8dbd-da2889980e63)
 
