@@ -649,6 +649,8 @@ ssh -A stanislav@192.168.2.25
 
 # Первый плейбук:
 
+[servers-playbook.yml](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/servers-playbook.yml)
+
 roles:
     - nginx
     - node_exporter
@@ -660,9 +662,6 @@ roles:
    
    ![Снимок экрана от 2023-06-10 14-18-03](https://github.com/stanislavarutyunov/diplom/assets/119142863/d5bdcd5d-a2c0-450a-b91a-95c2194b5e48)
 
-
-
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/servers-playbook.yml
 
 ![Снимок экрана от 2023-06-10 08-02-15](https://github.com/stanislavarutyunov/diplom/assets/119142863/065a39f4-afd4-4443-b632-14617da8f161)
 
@@ -711,7 +710,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 
 # второй и третий  плейбуки:
-
+[prometheus-playbook](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml)
 ```
 - hosts: prometheus
   remote_user: stanislav
@@ -781,10 +780,10 @@ scrape_configs:
 ```
 </details>
  
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
 
 
 
+[grafana-playbook](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml)
 
 ```
 - hosts: grafana
@@ -801,8 +800,6 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/p
 
 ![Снимок экрана от 2023-06-10 14-24-12](https://github.com/stanislavarutyunov/diplom/assets/119142863/d89c8a54-a229-4a10-8580-e2ee21ee76dd)
 
-
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/grafana-playbook.yml
 
 ## http://158.160.18.98:3000/login пароль admin
 
@@ -821,22 +818,24 @@ http://158.160.18.98:3000/d/4aBQsjSmz34/nginx-servers-metrics111?orgId=1&refresh
 
 # четвертый и пятый плейбуки:
 
+ 
 В связи с санкциями и недостпуностью ELK,принял решение джелать их через Docker:
 
 Elasticsearch:
 
+ [Elasticsearch-playbook](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/elasticsearch-playbook.yml)
+ 
 ![Снимок экрана от 2023-06-10 08-54-08](https://github.com/stanislavarutyunov/diplom/assets/119142863/efe427f9-bb52-4c43-9ab9-9d73c474e3e5)
 
 ![Снимок экрана от 2023-06-10 09-17-23](https://github.com/stanislavarutyunov/diplom/assets/119142863/b7fba072-49cb-4d5c-ba27-20494b628b07)
 
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/elasticsearch-playbook.yml
 
 Kibana(перед запуском уже установил на нем докер) :
 
 [Снимок экрана от 2023-06-10 08-54-46](https://github.com/stanislavarutyunov/diplom/assets/119142863/eb414866-d37e-42e0-a122-9c129630bac4)
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/kibana-playbook.yml
+[Kibana-playbook](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/kibana-playbook.yml)
 
 
 
