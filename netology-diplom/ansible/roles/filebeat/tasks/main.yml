@@ -1,4 +1,15 @@
 ---
+
+---
+- name: copy filebeat.deb
+  copy:
+    src: filebeat-8.6.2-amd64.deb
+    dest: /home/stanislav
+    
+- name: install filebeat
+  apt:
+    deb: "/home/stanislav/filebeat-8.6.2-amd64.deb"
+    
 - name: replace config file
   template:
     src: filebeat.yml.j2
