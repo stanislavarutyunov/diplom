@@ -3,6 +3,7 @@
 ## [SYS-DIPLOM](https://github.com/netology-code/sys-diplom)
 
 # Для начала работы я составил полный план того,что мне необходимо будет сделать:
+![Снимок экрана от 2023-06-11 09-37-53](https://github.com/stanislavarutyunov/diplom/assets/119142863/9c54c968-fc25-4896-80b5-e538219129f7)
 
 
  # 1. Для развертки инфраструкты используем Terraform:
