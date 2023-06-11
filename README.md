@@ -1,14 +1,17 @@
 
 # Задание можно посмотреть по ссылке:
-## https://github.com/netology-code/sys-diplom
+## [SYS-DIPLOM](https://github.com/netology-code/sys-diplom)
 
 # Для начала работы я составил полный план того,что мне необходимо будет сделать:
 
 ![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/c2693753-a924-4a78-9402-c26a40a1a22c)
 
-1) ## Для развертки инфраструкты используем Terraform:
+ # 1. Для развертки инфраструкты используем Terraform:
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/main.tf
+[MAIN.TF](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/main.tf)
+
+
+<details>
 
 ```
 terraform {
@@ -326,11 +329,15 @@ resource "yandex_alb_load_balancer" "web-load-balancer" {
     }
   }
 ```
+  </details>
 
 Группы безопасности:
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/securitygroups.tf
+[SECURITYGROUPS](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/securitygroups.tf)
 
+
+<details>
+  
 ```
 resource "yandex_vpc_security_group" "webservers-sg" {
   name        = "webserverssg"
@@ -511,16 +518,18 @@ resource "yandex_vpc_security_group" "loadbalancer" {
     port           = 80
   }
   ```
+ </details>
+  
   Здесь мы создаем Бастион-хост, который будет доступен с нашего пк по ssh. С бастиона уже мы сможем попасть на все наши остальные хосты, так же на всех хостах мы перекрываем исходящий трафик за исключением некоторых портов для сервисов: Kibana(5601)+внешний ip(158.160.0.12)
 Grafana(3000)+ ip(158.160.18.98). 
   
 Снапшоты:
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/snapshot.tf
+[SNAPSHOT.TF](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/snapshot.tf)
 
 Переменные:
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/variables.tf
+[VARIABLES.TF](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/variables.tf)
 
 
 # Meta:
@@ -543,7 +552,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
 
 ### Прописываем yes и инфраструктура создана. Все конфигурационные файлы,которые использовались для создания хостов,vpc и остальных сервисов в папке terraform.
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/terraform.tfstate.backup
+[TFSTATE](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/terraform.tfstate)
 
 
 ![Снимок экрана от 2023-06-10 09-41-07](https://github.com/stanislavarutyunov/diplom/assets/119142863/1f6f9049-ef2b-461f-bd80-76af53d65c66)
@@ -559,7 +568,10 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform
  
  Terraform outputs:
 Что было создано нами при помощи терраформа:
-7 Виртуальных машин,Балансировщик,web-backend,web-backend
+7 Виртуальных машин,Балансировщик, Target Group, Backend Group, HTTP-ROUTER
+
+<details>
+
 ```
  output "external_ip_address_balancer" {
   value = yandex_alb_load_balancer.web-load-balancer.listener.*.endpoint.0.address.0.external_ipv4_address
@@ -602,12 +614,12 @@ output "external_ip_address_vm_7" {
 }
 
 ```
+</details>
 
 
+# 2. Попадаем на наш бастион и пробрасываем ему ключи доступа для всех хостов
 
-2) # Попадаем на наш бастион и пробрасываем ему ключи доступа для всех хостов
 
-![Снимок экрана от 2023-06-10 08-35-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/b519c6b6-b80c-4583-b74b-56a9e1221107)
 
 ```
 ssh-add
@@ -617,17 +629,20 @@ ssh -A stanislav@192.168.1.32
 ssh -A stanislav@192.168.2.25
  и так далее
 ```
+
+![Снимок экрана от 2023-06-10 08-35-43](https://github.com/stanislavarutyunov/diplom/assets/119142863/b519c6b6-b80c-4583-b74b-56a9e1221107)
+
 ![Снимок экрана от 2023-06-10 08-39-10](https://github.com/stanislavarutyunov/diplom/assets/119142863/653f0130-5d5b-4026-ab63-999dea5b40b8)
 
 
-3) # С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
+# 3. С помощью ansible устанавливаем  и настраиваем необходимые сервисы на наших хостах:
 
 ![Снимок экрана от 2023-06-10 14-18-49](https://github.com/stanislavarutyunov/diplom/assets/119142863/ff1b02f4-e5fb-4307-a727-fa7c80b18014)
 
 Список всех наших хостов:
 Для доступа на все хосты используем "прокси" через наш Бастион:
 
-https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/inventory/hosts.ini
+[HOSTS.INI](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/inventory/hosts.ini)
 
 
 ![Снимок экрана от 2023-06-10 08-00-57](https://github.com/stanislavarutyunov/diplom/assets/119142863/c436114f-72ec-45c2-99cb-0e0bd6c1feff)
@@ -676,7 +691,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 
 
-## Адрес сайта http://130.193.34.194/
+## Адрес сайта: http://130.193.34.194/
  
  ### Настройки сайта(NGINX):
 
@@ -687,7 +702,7 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 
 ![Снимок экрана от 2023-06-07 21-51-41](https://github.com/stanislavarutyunov/diplom/assets/119142863/cb156f59-d20b-40ae-9c84-b74f3998634b)
 
-Сделаем проверку (`curl -v <публичный IP балансера>:80` ) :
+Сделаем проверку (`curl -v 130.193.34.194:80` ) :
 
 ![Снимок экрана от 2023-06-07 21-14-51](https://github.com/stanislavarutyunov/diplom/assets/119142863/3415162e-723a-4ca6-a8c0-572513422292)
 
@@ -710,6 +725,9 @@ https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/s
 ![Снимок экрана от 2023-06-10 14-23-25](https://github.com/stanislavarutyunov/diplom/assets/119142863/92d0b631-d5cd-44e8-8961-493cc1555859)
 
 Конфиг для Прометеуса:
+
+<details>
+
 ```
  Sample config for Prometheus.
 
@@ -762,7 +780,8 @@ scrape_configs:
         - {{ server }}:9100
     {% endfor %}
 ```
-
+</details>
+ 
 https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/ansible/prometheus-playbook.yml
 
 
