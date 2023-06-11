@@ -6,12 +6,12 @@ terraform {
   }
 }
 
-variable "authtoken" {
-  type = string
+
+
 }
 
 provider "yandex" {
-  token     = var.authtoken
+  token     = "xxxxxxxxx"
   cloud_id  = "b1g7stv2itkaoptc01to"
   folder_id = "b1gkdj4odgo1a0bjk09u"
 }
