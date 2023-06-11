@@ -4,7 +4,6 @@
 
 # Для начала работы я составил полный план того,что мне необходимо будет сделать:
 
-![image](https://github.com/stanislavarutyunov/diplom/assets/119142863/c2693753-a924-4a78-9402-c26a40a1a22c)
 
  # 1. Для развертки инфраструкты используем Terraform:
 
@@ -328,17 +327,6 @@ resource "yandex_alb_load_balancer" "web-load-balancer" {
       }
     }
   }
-```
-  </details>
-
-Группы безопасности:
-
-[SECURITYGROUPS](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/securitygroups.tf)
-
-
-<details>
-  
-```
 resource "yandex_vpc_security_group" "webservers-sg" {
   name        = "webserverssg"
   description = "Webservers security group"
@@ -517,18 +505,8 @@ resource "yandex_vpc_security_group" "loadbalancer" {
     v4_cidr_blocks = ["0.0.0.0/0"]
     port           = 80
   }
-  ```
- </details>
-  
-  Здесь мы создаем Бастион-хост, который будет доступен с нашего пк по ssh. С бастиона мы уже сможем попасть на все наши остальные хосты.
-  
-Снапшоты:
-
-[SNAPSHOT.TF](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/snapshot.tf)
-
-Переменные:
-
-[VARIABLES.TF](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/variables.tf)
+  ``` 
+  </details>
 
 
 # [Meta](https://github.com/stanislavarutyunov/diplom/blob/main/netology-diplom/terraform/meta.txt):
