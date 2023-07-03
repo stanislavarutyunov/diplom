@@ -1,220 +1,162 @@
-resource "yandex_vpc_security_group" "webservers-sg" {
-  name        = "webserverssg"
-  description = "Webservers security group"
+# Security Groups
+# Security bastion host
+
+resource "yandex_vpc_security_group" "group-bastion-host" {
+  name        = "My security group bastion host"
   network_id  = yandex_vpc_network.network-1.id
-
   ingress {
     protocol       = "TCP"
-    description    = "Rule1 for healthchecks"
-    v4_cidr_blocks = ["198.18.235.0/24"]
-    from_port      = 1
-    to_port        = 32767
-  }
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule2 for healthchecks"
-    v4_cidr_blocks = ["198.18.248.0/24"]
-    from_port      = 1
-    to_port        = 32767
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for load balancer"
-    security_group_id = yandex_vpc_security_group.loadbalancer.id
-    port              = 80
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for bastion ssh"
-    security_group_id = yandex_vpc_security_group.bastion.id
-    port              = 22
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule1 for metrics"
-    security_group_id = yandex_vpc_security_group.prometheus-sg.id
-    port              = 9100
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule2 for metrics"
-    security_group_id = yandex_vpc_security_group.prometheus-sg.id
-    port              = 4040
-  }
-
-  egress {
-    protocol       = "ANY"
-    description    = "Rule out"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "yandex_vpc_security_group" "prometheus-sg" {
-  name        = "prometheussg"
-  description = "Prometheus security group"
-  network_id  = yandex_vpc_network.network-1.id
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for grafana"
-    security_group_id = yandex_vpc_security_group.grafana-sg.id
-    port              = 9090
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for bastion ssh"
-    security_group_id = yandex_vpc_security_group.bastion.id
-    port              = 22
-  }
-
-  egress {
-    protocol       = "ANY"
-    description    = "Rule out"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "yandex_vpc_security_group" "elasticsearch-sg" {
-  name        = "elasticsearchsg"
-  description = "Elasticsearch security group"
-  network_id  = yandex_vpc_network.network-1.id
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for kibana"
-    security_group_id = yandex_vpc_security_group.kibana-sg.id
-    port              = 9200
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for webservers"
-    security_group_id = yandex_vpc_security_group.webservers-sg.id
-    port              = 9200
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for bastion ssh"
-    security_group_id = yandex_vpc_security_group.bastion.id
-    port              = 22
-  }
-
-  egress {
-    protocol       = "ANY"
-    description    = "Rule out"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "yandex_vpc_security_group" "grafana-sg" {
-  name        = "grafanasg"
-  description = "Grafana security group"
-  network_id  = yandex_vpc_network.network-1.id
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule for all"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 3000
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for bastion ssh"
-    security_group_id = yandex_vpc_security_group.bastion.id
-    port              = 22
-  }
-
-  egress {
-    protocol       = "ANY"
-    description    = "Rule out"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "yandex_vpc_security_group" "kibana-sg" {
-  name        = "kibanasg"
-  description = "Kibana security group"
-  network_id  = yandex_vpc_network.network-1.id
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule for all"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 5601
-  }
-
-  ingress {
-    protocol          = "TCP"
-    description       = "Rule for bastion ssh"
-    security_group_id = yandex_vpc_security_group.bastion.id
-    port              = 22
-  }
-
-  egress {
-    protocol       = "ANY"
-    description    = "Rule out"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "yandex_vpc_security_group" "loadbalancer" {
-  name        = "loadbalancer1sg"
-  description = "Load balancer security group"
-  network_id  = yandex_vpc_network.network-1.id
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule for income"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 80
-  }
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule1 for healthchecks"
-    v4_cidr_blocks = ["198.18.235.0/24"]
-    from_port      = 1
-    to_port        = 32767
-  }
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule2 for healthchecks"
-    v4_cidr_blocks = ["198.18.248.0/24"]
-    from_port      = 1
-    to_port        = 32767
-  }
-
-  egress {
-    protocol       = "ANY"
-    description    = "Rule out"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "yandex_vpc_security_group" "bastion" {
-  name        = "Bastionsg"
-  description = "Bastion security group"
-  network_id  = yandex_vpc_network.network-1.id
-
-  ingress {
-    protocol       = "TCP"
-    description    = "Rule for income"
-    v4_cidr_blocks = ["0.0.0.0/0"]
     port           = 22
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
     protocol       = "ANY"
-    description    = "Rule out"
+    from_port      = 0
+    to_port        = 65535
     v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Security group to allow incoming ssh traffic
+resource "yandex_vpc_security_group" "group-ssh-traffic" {
+  name        = "My security group ssh traffic"
+  network_id  = yandex_vpc_network.network-1.id
+  ingress {
+    protocol       = "TCP"
+    port           = 22
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  ingress {
+    protocol       = "ICMP"
+    from_port      = 0
+    to_port        = 65535
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+}
+
+# Security group webservers
+resource "yandex_vpc_security_group" "group-webservers" {
+  name        = "My security group webservers"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 80
+   # predefined_target = "loadbalancer_healthchecks"
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  ingress {
+    protocol       = "TCP"
+    port           = 4040
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  ingress {
+    protocol       = "TCP"
+    port           = 9100
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  egress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
+  }
+}
+
+# Security group prometheus
+resource "yandex_vpc_security_group" "group-prometheus" {
+  name        = "My security group prometheus"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 9090
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  egress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
+  }
+}
+
+# Security group public network grafana
+resource "yandex_vpc_security_group" "group-public-network-grafana" {
+  name        = "My security group public network grafana"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 3000
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol       = "TCP"
+    port           = 9090
+    v4_cidr_blocks = ["192.168.30.3/32"]
+  }
+}
+
+# Security group elasticsearch
+resource "yandex_vpc_security_group" "group-elasticsearch" {
+  name        = "My security group elasticsearch"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 9200
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  egress {
+    protocol       = "TCP"
+    port           = 5601
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+}
+
+# Security group public network kibana
+resource "yandex_vpc_security_group" "group-public-network-kibana" {
+  name        = "My security group public network kibana"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 5601
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol       = "TCP"
+    port           = 9200
+    v4_cidr_blocks = ["192.168.30.22/32"]
+  }
+}
+
+# Security group public application load balancer
+resource "yandex_vpc_security_group" "group-public-network-alb" {
+  name        = "My security group public network application load balancer"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
+  }
+
+  egress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
   }
 }
