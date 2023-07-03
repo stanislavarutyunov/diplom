@@ -6,293 +6,524 @@ terraform {
   }
 }
 
-
-
-}
-
 provider "yandex" {
-  token     = "xxxxxxxxx"
-  cloud_id  = "b1g7stv2itkaoptc01to"
-  folder_id = "b1gkdj4odgo1a0bjk09u"
+  token     = "xxx"
+  cloud_id  = "xxx"
+  folder_id = "xxx"
 }
 
-resource "yandex_vpc_address" "staddr" {
-  name = "balanceraddr"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  external_ipv4_address {
-    zone_id = "ru-central1-b"
-  }
-}
+# Security Groups
+# Security bastion host
 
-resource "yandex_compute_instance" "webserver" {
-  for_each = var.webserv
-  name     = each.key
-  zone     = each.value.zone
-
-  resources {
-    cores  = 2
-    memory = 6
+resource "yandex_vpc_security_group" "group-bastion-host" {
+  name        = "My security group bastion host"
+  network_id  = yandex_vpc_network.network-1.id
+  ingress {
+    protocol       = "TCP"
+    port           = 22
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
 
-  boot_disk {
-    initialize_params {
-      image_id = "fd8a67rb91j689dqp60h"
-      size     = 14
-    }
-  }
-
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.privatesubnet["${each.value.subnet}"].id
-    security_group_ids = ["${yandex_vpc_security_group.webservers-sg.id}"]
-  }
-
-  metadata = {
-    user-data = "${file("/home/stanislav/git/netology-diplom/terraform/meta.txt")}"
+  egress {
+    protocol       = "ANY"
+    from_port      = 0
+    to_port        = 65535
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-resource "yandex_compute_instance" "vm-3" {
-  name        = "prometheus"
-  description = "prometheus_server"
-  zone        = "ru-central1-a"
-
-  resources {
-    cores  = 2
-    memory = 6
+# Security group to allow incoming ssh traffic
+resource "yandex_vpc_security_group" "group-ssh-traffic" {
+  name        = "My security group ssh traffic"
+  network_id  = yandex_vpc_network.network-1.id
+  ingress {
+    protocol       = "TCP"
+    port           = 22
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
   }
 
-  boot_disk {
-    initialize_params {
-      image_id = "fd8a67rb91j689dqp60h"
-      size     = 16
-    }
-  }
-
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.privatesubnet["prsubneta"].id
-    security_group_ids = ["${yandex_vpc_security_group.prometheus-sg.id}"]
-  }
-
-  metadata = {
-    user-data = "${file("./meta.txt")}"
+  ingress {
+    protocol       = "ICMP"
+    from_port      = 0
+    to_port        = 65535
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
   }
 }
 
-resource "yandex_compute_instance" "vm-4" {
-  name        = "grafana"
-  description = "grafana_server"
-  zone        = "ru-central1-b"
+# Security group webservers
+resource "yandex_vpc_security_group" "group-webservers" {
+  name        = "My security group webservers"
+  network_id  = yandex_vpc_network.network-1.id
 
-  resources {
-    cores  = 2
-    memory = 8
+  ingress {
+    protocol       = "TCP"
+    port           = 80
+   # predefined_target = "loadbalancer_healthchecks"
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
   }
 
-  boot_disk {
-    initialize_params {
-      image_id = "fd8a67rb91j689dqp60h"
-      size     = 18
-    }
+  ingress {
+    protocol       = "TCP"
+    port           = 4040
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
   }
 
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.publicsubnet.id
-    nat                = true
-    security_group_ids = ["${yandex_vpc_security_group.grafana-sg.id}"]
+  ingress {
+    protocol       = "TCP"
+    port           = 9100
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
   }
 
-  metadata = {
-    user-data = "${file("/home/stanislav/git/netology-diplom/terraform/meta.txt")}"
-  }
-}
-
-resource "yandex_compute_instance" "vm-5" {
-  name        = "elasticsearch"
-  zone        = "ru-central1-b"
-  description = "elasticsearch_server"
-
-  resources {
-    cores  = 2
-    memory = 6
-  }
-
-  boot_disk {
-    initialize_params {
-      image_id = "fd8a67rb91j689dqp60h"
-      size     = 20
-    }
-  }
-
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.privatesubnet["prsubnetb"].id
-    security_group_ids = ["${yandex_vpc_security_group.elasticsearch-sg.id}"]
-  }
-
-  metadata = {
-    user-data = "${file("./meta.txt")}"
+  egress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
   }
 }
 
-resource "yandex_compute_instance" "vm-6" {
-  name        = "kibana"
-  zone        = "ru-central1-b"
-  description = "kibana_server"
+# Security group prometheus
+resource "yandex_vpc_security_group" "group-prometheus" {
+  name        = "My security group prometheus"
+  network_id  = yandex_vpc_network.network-1.id
 
-  resources {
-    cores  = 2
-    memory = 8
+  ingress {
+    protocol       = "TCP"
+    port           = 9090
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
   }
 
-  boot_disk {
-    initialize_params {
-      image_id = "fd8a67rb91j689dqp60h"
-      size     = 16
-    }
-  }
-
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.publicsubnet.id
-    nat                = true
-    security_group_ids = ["${yandex_vpc_security_group.kibana-sg.id}"]
-  }
-
-  metadata = {
-    user-data = "${file("/home/stanislav/git/netology-diplom/terraform/meta.txt")}"
+  egress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
   }
 }
 
-resource "yandex_compute_instance" "vm-7" {
-  name        = "bastionhost"
-  zone        = "ru-central1-b"
-  description = "bastion"
+# Security group public network grafana
+resource "yandex_vpc_security_group" "group-public-network-grafana" {
+  name        = "My security group public network grafana"
+  network_id  = yandex_vpc_network.network-1.id
 
-  resources {
-    cores  = 2
-    memory = 2
+  ingress {
+    protocol       = "TCP"
+    port           = 3000
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
 
-  boot_disk {
-    initialize_params {
-      image_id = "fd8a67rb91j689dqp60h"
-      size     = 8
-    }
-  }
-
-  network_interface {
-    subnet_id          = yandex_vpc_subnet.publicsubnet.id
-    nat                = true
-    security_group_ids = ["${yandex_vpc_security_group.bastion.id}"]
-  }
-  metadata = {
-    user-data = "${file("./meta.txt")}"
+  egress {
+    protocol       = "TCP"
+    port           = 9090
+    v4_cidr_blocks = ["192.168.30.3/32"]
   }
 }
 
-resource "yandex_vpc_subnet" "privatesubnet" {
-  for_each       = var.subnetinfo
-  name           = each.key
-  zone           = each.value.zone
-  v4_cidr_blocks = each.value.v4_cidr_blocks
-  network_id     = yandex_vpc_network.network-1.id
-  route_table_id = yandex_vpc_route_table.natroute.id
+# Security group elasticsearch
+resource "yandex_vpc_security_group" "group-elasticsearch" {
+  name        = "My security group elasticsearch"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 9200
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
+
+  egress {
+    protocol       = "TCP"
+    port           = 5601
+    v4_cidr_blocks = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
+  }
 }
+
+# Security group public network kibana
+resource "yandex_vpc_security_group" "group-public-network-kibana" {
+  name        = "My security group public network kibana"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    port           = 5601
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol       = "TCP"
+    port           = 9200
+    v4_cidr_blocks = ["192.168.30.22/32"]
+  }
+}
+
+# Security group public application load balancer
+resource "yandex_vpc_security_group" "group-public-network-alb" {
+  name        = "My security group public network application load balancer"
+  network_id  = yandex_vpc_network.network-1.id
+
+  ingress {
+    protocol       = "TCP"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
+  }
+
+  egress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    from_port      = 0
+    to_port        = 65535
+  }
+}
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Сеть
 
 resource "yandex_vpc_network" "network-1" {
   name = "network1"
 }
 
-resource "yandex_vpc_gateway" "nat_gateway" {
-  name = "nat-gateway"
-  shared_egress_gateway {}
+resource "yandex_vpc_subnet" "subnet-1" {
+  name           = "subnet1"
+  zone           = "ru-central1-a"
+  network_id     = yandex_vpc_network.network-1.id
+  v4_cidr_blocks = ["192.168.10.0/24"]
 }
 
-resource "yandex_vpc_route_table" "natroute" {
-  name       = "nat-route-table"
-  network_id = yandex_vpc_network.network-1.id
-
-  static_route {
-    destination_prefix = "0.0.0.0/0"
-    gateway_id         = yandex_vpc_gateway.nat_gateway.id
-  }
-}
-
-resource "yandex_vpc_subnet" "publicsubnet" {
-  name           = "pubsubnet"
+resource "yandex_vpc_subnet" "subnet-2" {
+  name           = "subnet2"
   zone           = "ru-central1-b"
   network_id     = yandex_vpc_network.network-1.id
-  v4_cidr_blocks = ["192.168.3.0/24"]
+  v4_cidr_blocks = ["192.168.20.0/24"]
 }
 
-resource "yandex_alb_target_group" "web-target" {
-  name = "web-target-group"
+resource "yandex_vpc_subnet" "subnet-3" {
+  name           = "subnet3"
+  zone           = "ru-central1-c"
+  network_id     = yandex_vpc_network.network-1.id
+  v4_cidr_blocks = ["192.168.30.0/24"]
+}
 
-  dynamic "target" {
-    for_each = var.webserv
-    content {
-      subnet_id  = yandex_vpc_subnet.privatesubnet["${target.value.subnet}"].id
-      ip_address = yandex_compute_instance.webserver["${target.key}"].network_interface.0.ip_address
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# bastion host
+
+resource "yandex_compute_instance" "bastion-host" {
+
+  name = "bastion-host"
+  zone = "ru-central1-c"
+
+  resources {
+    cores = 2
+    memory = 2
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
     }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-3.id
+    nat       = true
+    security_group_ids = [yandex_vpc_security_group.group-bastion-host.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
   }
 }
 
-resource "yandex_alb_backend_group" "web-backend" {
-  name = "web-backend-group"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# web-server1
+
+resource "yandex_compute_instance" "web-server1" {
+
+  name = "web-server1"
+  zone = "ru-central1-a"
+
+  resources {
+    cores = 2
+    memory = 2
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-1.id
+    nat       = false
+    security_group_ids = [yandex_vpc_security_group.group-ssh-traffic.id, yandex_vpc_security_group.group-webservers.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# web-server2
+
+resource "yandex_compute_instance" "web-server2" {
+
+  name = "web-server2"
+  zone = "ru-central1-b"
+
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 20
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-2.id
+    nat       = false
+    security_group_ids = [yandex_vpc_security_group.group-ssh-traffic.id, yandex_vpc_security_group.group-webservers.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+# Prometheus
+
+resource "yandex_compute_instance" "vm-prometheus" {
+
+  name = "vm-prometheus"
+  zone = "ru-central1-c"
+
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 100
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-3.id
+    nat       = false
+    security_group_ids = [yandex_vpc_security_group.group-ssh-traffic.id, yandex_vpc_security_group.group-prometheus.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+# Grafana
+
+resource "yandex_compute_instance" "vm-grafana" {
+
+  name = "vm-grafana"
+  zone = "ru-central1-c"
+
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 100
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-3.id
+    nat       = true
+    security_group_ids = [yandex_vpc_security_group.group-public-network-grafana.id, yandex_vpc_security_group.group-ssh-traffic.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Logs
+# Elasticsearch
+
+resource "yandex_compute_instance" "vm-elasticsearch" {
+
+  name = "vm-elasticsearch"
+  zone = "ru-central1-c"
+
+  resources {
+    cores  = 4
+    memory = 4
+    core_fraction = 100
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-3.id
+    nat       = false
+    security_group_ids = [yandex_vpc_security_group.group-elasticsearch.id, yandex_vpc_security_group.group-ssh-traffic.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+# Kibana
+
+resource "yandex_compute_instance" "vm-kibana" {
+
+  name = "vm-kibana"
+  zone = "ru-central1-c"
+
+  resources {
+    cores  = 2
+    memory = 2
+    core_fraction = 100
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd80iibe8asp4inkhuhr"
+      size = 13
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.subnet-3.id
+    nat       = true
+    security_group_ids = [yandex_vpc_security_group.group-public-network-kibana.id, yandex_vpc_security_group.group-ssh-traffic.id]
+  }
+
+  metadata = {
+    user-data = "${file("./meta.txt")}"
+  }
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# target group
+
+resource "yandex_alb_target_group" "my-target-group" {
+  name      = "my-target-group"
+  #region_id = "ru-central1"
+
+  target {
+    subnet_id = "${yandex_vpc_subnet.subnet-1.id}"
+    ip_address   = "${yandex_compute_instance.web-server1.network_interface.0.ip_address}"
+  }
+
+  target {
+    subnet_id = "${yandex_vpc_subnet.subnet-2.id}"
+    ip_address   = "${yandex_compute_instance.web-server2.network_interface.0.ip_address}"
+  }
+}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Backend
+
+resource "yandex_alb_backend_group" "my-backend-group" {
+  name      = "my-backend-group"
 
   http_backend {
-    name             = "http-backend"
-    weight           = 1
-    port             = 80
-    target_group_ids = ["${yandex_alb_target_group.web-target.id}"]
-    load_balancing_config {
-      panic_threshold = 90
-    }
+    name = "my-http-backend"
+    weight = 1
+    port = 80
+    target_group_ids = ["${yandex_alb_target_group.my-target-group.id}"]
     healthcheck {
-      timeout             = "10s"
-      interval            = "2s"
-      healthy_threshold   = 10
-      unhealthy_threshold = 15
+      timeout = "1s"
+      interval = "1s"
       http_healthcheck {
-        path = "/"
+        path  = "/"
       }
     }
   }
 }
 
-resource "yandex_alb_http_router" "web-router" {
-  name = "webrouter"
-  labels = {
-    tf-label    = "tf-web-http-router"
-    empty-label = ""
-  }
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# HTTP router
+
+resource "yandex_alb_http_router" "my-http-router" {
+  name      = "my-http-router"
 }
 
-resource "yandex_alb_virtual_host" "virtual-host" {
-  name           = "vhrouter"
-  http_router_id = yandex_alb_http_router.web-router.id
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# hosts
+
+resource "yandex_alb_virtual_host" "my-virtual-host" {
+  name      = "my-virtual-host"
+  http_router_id = yandex_alb_http_router.my-http-router.id
   route {
-    name = "route1"
+    name = "my-route"
+
     http_route {
       http_route_action {
-        backend_group_id = yandex_alb_backend_group.web-backend.id
-        timeout          = "10s"
+        backend_group_id = yandex_alb_backend_group.my-backend-group.id
+        timeout = "3s"
       }
     }
   }
 }
 
-resource "yandex_alb_load_balancer" "web-load-balancer" {
-  name               = "load-balancer"
-  network_id         = yandex_vpc_network.network-1.id
-  security_group_ids = ["${yandex_vpc_security_group.loadbalancer.id}"]
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# networkloadbalancer
+
+resource "yandex_alb_load_balancer" "my-network-load-balancer" {
+  name        = "my-load-balancer"
+
+  network_id  = yandex_vpc_network.network-1.id
+  security_group_ids = [yandex_vpc_security_group.group-public-network-alb.id]
 
   allocation_policy {
     location {
       zone_id   = "ru-central1-a"
-      subnet_id = yandex_vpc_subnet.privatesubnet["prsubneta"].id
+      subnet_id = yandex_vpc_subnet.subnet-1.id
     }
+
     location {
       zone_id   = "ru-central1-b"
-      subnet_id = yandex_vpc_subnet.privatesubnet["prsubnetb"].id
+      subnet_id = yandex_vpc_subnet.subnet-2.id
     }
   }
 
@@ -301,57 +532,16 @@ resource "yandex_alb_load_balancer" "web-load-balancer" {
     endpoint {
       address {
         external_ipv4_address {
-          address = yandex_vpc_address.staddr.external_ipv4_address[0].address
         }
       }
-      ports = [80]
+      ports = [ 80 ]
     }
     http {
       handler {
-        http_router_id = yandex_alb_http_router.web-router.id
+        http_router_id = yandex_alb_http_router.my-http-router.id
       }
     }
   }
 }
 
-output "external_ip_address_balancer" {
-  value = yandex_alb_load_balancer.web-load-balancer.listener.*.endpoint.0.address.0.external_ipv4_address
-}
-output "internal_ip_address_web_1" {
-  value = yandex_compute_instance.webserver["web1"].network_interface.0.ip_address
-}
-
-output "internal_ip_address_web_2" {
-  value = yandex_compute_instance.webserver["web2"].network_interface.0.ip_address
-}
-
-output "internal_ip_address_vm_3" {
-  value = yandex_compute_instance.vm-3.network_interface.0.ip_address
-}
-
-output "internal_ip_address_vm_4" {
-  value = yandex_compute_instance.vm-4.network_interface.0.ip_address
-}
-output "external_ip_address_vm_4" {
-  value = yandex_compute_instance.vm-4.network_interface.0.nat_ip_address
-}
-
-output "internal_ip_address_vm_5" {
-  value = yandex_compute_instance.vm-5.network_interface.0.ip_address
-}
-
-output "internal_ip_address_vm_6" {
-  value = yandex_compute_instance.vm-6.network_interface.0.ip_address
-}
-output "external_ip_address_vm_6" {
-  value = yandex_compute_instance.vm-6.network_interface.0.nat_ip_address
-}
-
-output "internal_ip_address_vm_7" {
-  value = yandex_compute_instance.vm-7.network_interface.0.ip_address
-}
-output "external_ip_address_vm_7" {
-  value = yandex_compute_instance.vm-7.network_interface.0.nat_ip_address
-}
-
-
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
