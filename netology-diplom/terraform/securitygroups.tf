@@ -1,5 +1,5 @@
-# Security Groups
-# Security bastion host
+
+#Security bastion host
 
 resource "yandex_vpc_security_group" "group-bastion-host" {
   name        = "My security group bastion host"
